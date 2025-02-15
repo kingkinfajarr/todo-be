@@ -7,6 +7,8 @@ COPY prisma ./prisma/
 
 RUN npm install --legacy-peer-deps
 
+RUN ls -l prisma
+
 RUN npx prisma generate
 
 COPY . .
@@ -20,11 +22,14 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm install --only=production --legacy-peer-deps
+RUN npm install --legacy-peer-deps
+
+RUN ls -l prisma
+
 RUN npx prisma generate
 
 COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+CMD npx prisma migrate deploy && npm run start:prod
